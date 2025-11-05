@@ -1,0 +1,541 @@
+<!doctype html>
+<!-- The lang attribute is dynamically changed by JavaScript -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Title is set by JavaScript -->
+<title>Clash → SOCKS5 Local Config Generator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root {
+  --primary-color: #2e7d32;
+  --primary-light: #e8f5e9;
+  --text-color: #212121;
+  --text-light: #616161;
+  --border-color: #e0e0e0;
+  --background-color: #f1f8e9;
+  --card-background: #ffffff;
+  --error-color: #d32f2f;
+  --success-color: #388e3c;
+  --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --border-radius: 12px;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  line-height: 1.6;
+}
+
+.card {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--card-background);
+  padding: 30px 40px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  justify-content: space-between;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-title svg {
+  width: 32px;
+  height: 32px;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+  color: var(--primary-color);
+}
+
+p.lead {
+  margin: 0 0 24px;
+  font-size: 15px;
+  color: var(--text-light);
+}
+
+label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  display: block;
+}
+
+textarea, input[type="text"], input[type="number"] {
+  font-family: inherit;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--primary-light);
+  transition: all 0.3s ease;
+}
+
+textarea:focus, input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+  background-color: #fff;
+}
+
+textarea {
+  min-height: 200px;
+  resize: vertical;
+}
+
+textarea.dragover {
+  border-color: var(--primary-color);
+  background-color: #dcedc8;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+  align-items: end;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  flex: 1;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary { background: var(--primary-color); color: white; }
+.btn-secondary { background: var(--primary-light); color: var(--primary-color); border: 1px solid var(--border-color); }
+a.btn { text-decoration: none; }
+
+.output-row { margin-top: 24px; }
+#outputYAML { min-height: 220px; background-color: #fafafa; color: #333; font-family: monospace; }
+
+.info {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  display: none;
+}
+.info.success { background-color: var(--primary-light); color: var(--success-color); display: block; }
+.info.error { background-color: #ffebee; color: var(--error-color); display: block; }
+
+.footer-note { font-size: 12px; color: var(--text-light); margin-top: 16px; text-align: center; }
+
+/* Toggle Switch Styles */
+.switch-container { display: flex; flex-direction: column; }
+.switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary-color); }
+input:focus + .slider { box-shadow: 0 0 1px var(--primary-color); }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* Footer Styles */
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  font-size: 14px;
+  color: var(--text-light);
+}
+.footer a {
+  color: var(--text-color);
+  transition: color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.footer a:hover { color: var(--primary-color); }
+.footer a svg { font-size: 1.25rem; }
+
+/* Language Switcher Styles */
+.lang-switcher button {
+    background: none; border: none; padding: 0.5rem 0.75rem;
+    font-size: 0.9rem; font-weight: 500; color: var(--text-light);
+    cursor: pointer; border-radius: 6px; transition: all 0.2s ease;
+}
+.lang-switcher button:hover { background-color: #f0f0f0; }
+.lang-switcher button.active { color: var(--primary-color); background-color: var(--primary-light); }
+
+@media (max-width: 700px) {
+  .card { padding: 20px; }
+  .button-group { flex-direction: column; }
+  h1 { font-size: 22px; }
+  .header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="header-title">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" /></svg>
+        <h1 data-translate-key="pageTitle"></h1>
+    </div>
+    <div class="lang-switcher">
+        <button id="btn-en" class="active">English</button>
+        <button id="btn-cn">中文</button>
+    </div>
+  </div>
+  <p class="lead" data-translate-key="leadDescription"></p>
+
+  <label for="inputYAML" data-translate-key="inputLabel"></label>
+  <textarea id="inputYAML"></textarea>
+
+  <div class="controls-grid">
+    <div>
+      <label for="socksUser" data-translate-key="userLabel"></label>
+      <input type="text" id="socksUser" value="admins">
+    </div>
+    <div>
+      <label for="socksPass" data-translate-key="passLabel"></label>
+      <input type="text" id="socksPass" value="admin123888">
+    </div>
+    <div>
+      <label for="startPort" data-translate-key="portLabel"></label>
+      <input id="startPort" type="number" min="1024" step="1" value="32000">
+    </div>
+    <div class="switch-container">
+        <label for="allowLan" data-translate-key="lanLabel"></label>
+        <label class="switch">
+            <input type="checkbox" id="allowLan" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button id="processButton" class="btn btn-primary">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/></svg>
+      <span id="processButtonText"></span>
+    </button>
+    <button id="copyButton" class="btn btn-secondary" disabled>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      <span data-translate-key="copyBtn"></span>
+    </button>
+    <a id="downloadLink" class="btn btn-secondary" style="pointer-events: none; opacity: 0.6;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      <span data-translate-key="downloadBtn"></span>
+    </a>
+  </div>
+
+  <div class="output-row">
+    <label for="outputYAML" data-translate-key="outputLabel"></label>
+    <textarea id="outputYAML" readonly></textarea>
+    <div class="info" id="infoDiv"></div>
+  </div>
+
+  <div class="footer-note" data-translate-key="footerNote"></div>
+  
+  <div class="footer">
+    <span>Powered by Prince</span>
+    <a href="https://github.com/Andeasw/ClashSockify" target="_blank" rel="noopener noreferrer" title="View on GitHub">
+        <svg fill="currentColor" fill-rule="evenodd" height="1em" style="flex:none;line-height:1" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><title>Github</title><path d="M12 0c6.63 0 12 5.276 12 11.79-.001 5.067-3.29 9.567-8.175 11.187-.6.118-.825-.25-.825-.56 0-.398.015-1.665.015-3.242 0-1.105-.375-1.813-.81-2.181 2.67-.295 5.475-1.297 5.475-5.822 0-1.297-.465-2.344-1.23-3.169.12-.295.54-1.503-.12-3.125 0 0-1.005-.324-3.3 1.209a11.32 11.32 0 00-3-.398c-1.02 0-2.04.133-3 .398-2.295-1.518-3.3-1.209-3.3-1.209-.66 1.622-.24 2.83-.12 3.125-.765.825-1.23 1.887-1.23 3.169 0 4.51 2.79 5.527 5.46 5.822-.345.294-.66.81-.765 1.577-.69.31-2.415.81-3.495-.973-.225-.354-.9-1.223-1.845-1.209-1.005.015-.405.56.015.781.51.28 1.095 1.327 1.23 1.666.24.663 1.02 1.93 4.035 1.385 0 .988.015 1.916.015 2.196 0 .31-.225.664-.825.56C3.303 21.374-.003 16.867 0 11.791 0 5.276 5.37 0 12 0z"></path></svg>
+    </a>
+  </div>
+</div>
+
+<script src="./jquery.min.js"></script>
+<script src="./js-yaml.min.js"></script>
+
+<script>
+(function() {
+  "use strict";
+
+  // --- TRANSLATION DATA ---
+  const translations = {
+    en: {
+      pageTitle: "Clash → SOCKS5 Local Config Generator",
+      leadDescription: "Convert your Clash configuration into a multi-port SOCKS5 proxy server with unified authentication. Fully offline and secure.",
+      inputLabel: "Original Clash Config (YAML)",
+      inputPlaceholder: "Paste your Clash configuration here (ensure valid YAML format), or drag & drop a .yaml file.",
+      userLabel: "Auth Username",
+      passLabel: "Auth Password",
+      portLabel: "Starting Port",
+      lanLabel: "Allow LAN Connection",
+      generateBtn: "Generate Config",
+      generateBtnInProgress: "Generating...",
+      copyBtn: "Copy",
+      downloadBtn: "Download",
+      outputLabel: "Generated Result",
+      outputPlaceholder: "Generated output will appear here...",
+      footerNote: "For first-time use, please test with a non-sensitive YAML file to verify functionality.",
+      msgFileReadSuccess: "File loaded successfully. Click Generate to proceed.",
+      msgFileReadError: "Failed to read the file. Please try again.",
+      msgInputEmpty: "Please paste or drag & drop your Clash configuration.",
+      msgSuccess: (p, s, e) => `Success! Created ${p} proxy ports, from ${s} to ${e}.`,
+      msgError: (m) => `Generation failed: ${m}`,
+      msgErrorUnknown: "Unknown error",
+      msgCopySuccess: "Copied to clipboard successfully!",
+      msgCopyError: (e) => `Copy failed: ${e}`,
+      errParseYaml: (m) => `Failed to parse YAML: ${m}`,
+      errInvalidClash: "Parsing failed: Please ensure the input is a valid Clash config with a non-empty 'proxies' list."
+    },
+    cn: {
+      pageTitle: "Clash → Socks5 本地配置生成器",
+      leadDescription: "将您的 Clash 配置转换为多端口 Socks5 代理，并统一设置认证密码。完全离线，保障隐私安全。",
+      inputLabel: "原始 Clash 配置 (YAML)",
+      inputPlaceholder: "在此处粘贴您的 Clash 配置（注意格式规范），或将 .yaml 文件拖拽至此",
+      userLabel: "认证用户名",
+      passLabel: "认证密码",
+      portLabel: "起始端口",
+      lanLabel: "允许局域网连接",
+      generateBtn: "生成配置",
+      generateBtnInProgress: "正在生成...",
+      copyBtn: "复制",
+      downloadBtn: "下载",
+      outputLabel: "生成结果",
+      outputPlaceholder: "生成结果将显示在这里...",
+      footerNote: "首次使用请用无敏感内容的 YAML 文件验证功能。",
+      msgFileReadSuccess: "文件读取成功，请点击生成。",
+      msgFileReadError: "读取文件失败，请重试。",
+      msgInputEmpty: "请输入或拖入 Clash 配置内容。",
+      msgSuccess: (p, s, e) => `生成成功！共创建 ${p} 个代理端口，范围：${s} — ${e}`,
+      msgError: (m) => `生成失败：${m}`,
+      msgErrorUnknown: "未知错误",
+      msgCopySuccess: "已成功复制到剪贴板！",
+      msgCopyError: (e) => `复制失败：${e}`,
+      errParseYaml: (m) => `YAML 格式解析失败: ${m}`,
+      errInvalidClash: "解析失败：请确保输入内容是有效的 Clash 配置，并且 `proxies` 列表不为空。"
+    }
+  };
+
+  let currentLang = 'en';
+
+  // --- DOM Elements ---
+  const $ = selector => document.querySelector(selector);
+  const inputYAML = $('#inputYAML');
+  const outputYAML = $('#outputYAML');
+  const processButton = $('#processButton');
+  const processButtonText = $('#processButtonText');
+  const copyButton = $('#copyButton');
+  const downloadLink = $('#downloadLink');
+  const infoDiv = $('#infoDiv');
+  const btnEn = $('#btn-en');
+  const btnCn = $('#btn-cn');
+  const allInputs = [$('#socksUser'), $('#socksPass'), $('#startPort'), $('#allowLan'), inputYAML];
+
+  // --- Language Switcher Logic ---
+  function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang === 'cn' ? 'zh-CN' : 'en';
+    const langData = translations[lang];
+
+    // Set all static text from translation data
+    document.title = langData.pageTitle;
+    document.querySelectorAll('[data-translate-key]').forEach(el => {
+        const key = el.dataset.translateKey;
+        if (langData[key]) {
+            el.textContent = langData[key];
+        }
+    });
+
+    // Set placeholders
+    inputYAML.placeholder = langData.inputPlaceholder;
+    outputYAML.placeholder = langData.outputPlaceholder;
+
+    // Set button text
+    processButtonText.textContent = langData.generateBtn;
+
+    // Update switcher UI
+    btnEn.classList.toggle('active', lang === 'en');
+    btnCn.classList.toggle('active', lang === 'cn');
+  }
+
+  // --- State Management ---
+  function showInfo(message, type = 'success') {
+    infoDiv.textContent = message;
+    infoDiv.className = `info ${type}`;
+  }
+
+  function setGenerateButtonState(isProcessing) {
+    processButton.disabled = isProcessing;
+    processButtonText.textContent = isProcessing 
+        ? translations[currentLang].generateBtnInProgress
+        : translations[currentLang].generateBtn;
+  }
+
+  function resetOutputState() {
+    outputYAML.value = '';
+    infoDiv.className = 'info';
+    copyButton.disabled = true;
+    downloadLink.style.pointerEvents = 'none';
+    downloadLink.style.opacity = '0.6';
+    downloadLink.removeAttribute('href');
+  }
+
+  // --- Core Logic ---
+  function convertYAML(inputText, startPort, user, pass, allowLan) {
+    let yamlData;
+    try {
+        yamlData = jsyaml.load(inputText);
+    } catch (e) {
+        throw new Error(translations[currentLang].errParseYaml(e.message));
+    }
+
+    if (!yamlData || typeof yamlData !== 'object' || !Array.isArray(yamlData.proxies) || yamlData.proxies.length === 0) {
+      throw new Error(translations[currentLang].errInvalidClash);
+    }
+
+    const proxies = yamlData.proxies.map((p, i) => ({ ...p, name: p.name || `proxy-${i}` }));
+
+    const listeners = proxies.map((proxy, i) => ({
+      name: `mixed-${i}`,
+      type: 'mixed',
+      port: Number(startPort) + i,
+      proxy: proxy.name,
+    }));
+
+    const newYAML = {
+      'allow-lan': allowLan,
+      'authentication': [`${user}:${pass}`],
+      'dns': yamlData.dns || {
+        enable: true,
+        'enhanced-mode': 'fake-ip',
+        'fake-ip-range': '198.18.0.1/16',
+        'default-nameserver': ['1.1.1.1', '8.8.8.8', '114.114.114.114'],
+        nameserver: ['https://cloudflare-dns.com/dns-query', 'https://doh.pub/dns-query'],
+      },
+      listeners: listeners,
+      proxies: proxies,
+    };
+
+    return jsyaml.dump(newYAML, { lineWidth: -1, noRefs: true });
+  }
+
+  // --- Event Listeners ---
+  inputYAML.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    inputYAML.classList.add('dragover');
+  });
+  inputYAML.addEventListener('dragleave', () => inputYAML.classList.remove('dragover'));
+  inputYAML.addEventListener('drop', (e) => {
+    e.preventDefault();
+    inputYAML.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      inputYAML.value = ev.target.result;
+      resetOutputState();
+      showInfo(translations[currentLang].msgFileReadSuccess, 'success');
+    };
+    reader.onerror = () => showInfo(translations[currentLang].msgFileReadError, 'error');
+    reader.readAsText(file);
+  });
+  
+  allInputs.forEach(input => input.addEventListener('input', resetOutputState));
+
+  processButton.addEventListener('click', () => {
+    const inputText = inputYAML.value;
+    if (!inputText) {
+      showInfo(translations[currentLang].msgInputEmpty, 'error');
+      return;
+    }
+    
+    resetOutputState();
+    setGenerateButtonState(true);
+
+    setTimeout(() => {
+      try {
+        const startPort = Number($('#startPort').value) || 32000;
+        const user = $('#socksUser').value || 'admins';
+        const pass = $('#socksPass').value || 'admin123888';
+        const allowLan = $('#allowLan').checked;
+
+        const outputText = convertYAML(inputText, startPort, user, pass, allowLan);
+        outputYAML.value = outputText;
+        
+        const proxyCount = (jsyaml.load(inputText).proxies || []).length;
+        const endPort = startPort + proxyCount - 1;
+        showInfo(translations[currentLang].msgSuccess(proxyCount, startPort, endPort), 'success');
+        
+        copyButton.disabled = false;
+        downloadLink.style.pointerEvents = 'auto';
+        downloadLink.style.opacity = '1';
+
+        const blob = new Blob([outputText], { type: 'text/yaml;charset=utf-8' });
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = 'socks.yaml';
+
+      } catch (err) {
+        showInfo(translations[currentLang].msgError(err.message || translations[currentLang].msgErrorUnknown), 'error');
+      } finally {
+        setGenerateButtonState(false);
+      }
+    }, 50);
+  });
+
+  copyButton.addEventListener('click', () => {
+    if (!outputYAML.value) return;
+    navigator.clipboard.writeText(outputYAML.value)
+      .then(() => showInfo(translations[currentLang].msgCopySuccess, 'success'))
+      .catch(err => showInfo(translations[currentLang].msgCopyError(err.message), 'error'));
+  });
+
+  btnEn.addEventListener('click', () => setLanguage('en'));
+  btnCn.addEventListener('click', () => setLanguage('cn'));
+
+  // --- Initial Page Load ---
+  setLanguage('en'); // Set default language to English
+
+})();
+</script>
+</body>
+</html>
