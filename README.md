@@ -4,7 +4,7 @@
 
 ---
 
-**CashSockify** is a simple yet powerful offline tool designed to transform a standard Clash configuration file into a multi-port Socket Secure proxy server setup. It takes your entire list of proxies and exposes each one on a dedicated, sequential port, all secured by a single username and password.
+**CashSockify** is a simple yet powerful offline tool designed to transform a standard Clash configuration file into a multi-port Local Socket Secure proxy server setup. It takes your entire list of proxies and exposes each one on a dedicated, sequential port, all secured by a single username and password.
 
 This project is perfect for users who need to use individual proxies from their Clash subscription in applications that only support authenticated Socket Secure, or for sharing specific nodes without distributing the entire subscription file.
 
