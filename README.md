@@ -79,4 +79,3 @@ To start, right-click on `start_mihomo.ps1` and select **"Run with PowerShell"**
 ### 📄 License
 
 This project is open-source and licensed under the [MIT License](./LICENSE).
-```
