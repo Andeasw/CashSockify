@@ -4,13 +4,13 @@
 
 ---
 
-**CashSockify** is a simple yet powerful offline tool designed to transform a standard Clash configuration file into a multi-port SOCKS5 proxy server setup. It takes your entire list of proxies and exposes each one on a dedicated, sequential port, all secured by a single username and password.
+**CashSockify** is a simple yet powerful offline tool designed to transform a standard Clash configuration file into a multi-port Socket Secure proxy server setup. It takes your entire list of proxies and exposes each one on a dedicated, sequential port, all secured by a single username and password.
 
-This project is perfect for users who need to use individual proxies from their Clash subscription in applications that only support authenticated SOCKS5, or for sharing specific nodes without distributing the entire subscription file.
+This project is perfect for users who need to use individual proxies from their Clash subscription in applications that only support authenticated Socket Secure, or for sharing specific nodes without distributing the entire subscription file.
 
 ### ✨ Key Features
 
-*   **Multi-Port SOCKS5 Conversion**: Instantly converts your entire list of Clash proxies into individual SOCKS5 proxies.
+*   **Multi-Port Socket Secure Conversion**: Instantly converts your entire list of Clash proxies into individual Socket Secure proxies.
 *   **Unified Authentication**: Secures every generated proxy port with a single, easy-to-manage username and password.
 *   **Fully Offline & Secure**: The conversion tool (`index.html`) runs entirely in your browser. Your configuration is never uploaded, ensuring 100% privacy.
 *   **Zero Configuration**: No need to edit script files. The scripts automatically find the core and configuration file in the same directory.
@@ -18,7 +18,7 @@ This project is perfect for users who need to use individual proxies from their 
 
 ### 🚀 Getting Started (Windows)
 
-The usage has been greatly simplified. Just follow three steps to get your SOCKS5 proxy service running.
+The usage has been greatly simplified. Just follow three steps to get your Socket Secure proxy service running.
 
 #### Step 1: Prepare the Files
 
@@ -42,7 +42,7 @@ At this point, your folder should contain the project files, `mihomo-windows-amd
 
 With all required files in the same directory, simply right-click on `start_mihomo.ps1` and select **"Run with PowerShell"**.
 
-The script will start the service in the background, and the PowerShell window will close automatically. Your SOCKS5 proxies are now running.
+The script will start the service in the background, and the PowerShell window will close automatically. Your Socket Secure proxies are now running.
 
 *   **To Stop the Service**: Right-click `stop_mihomo.ps1` and select "Run with PowerShell".
 *   **For Debugging**: If you need to see live output, run `Start-Process.ps1`. This will keep the console window open to display logs.
