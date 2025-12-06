@@ -1,11 +1,18 @@
 <script>
-(() => {
-  const lang = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-  if (lang !== 'zh') return;
+  (function () {
+    const langs = (navigator.languages && navigator.languages.length)
+      ? navigator.languages
+      : [navigator.language || ""];
 
-  const comment = document.createComment('nobanner');
+    const isZh = langs.some(l => String(l).toLowerCase().startsWith("zh"));
 
-  const target = document.body || document.documentElement;
-  target.appendChild(comment);
-})();
+    if (isZh) {
+      document.documentElement.setAttribute("data-nobanner", "true");
+
+      const banner = document.querySelector("#banner");
+      if (banner) banner.style.display = "none";
+
+      document.documentElement.appendChild(document.createComment("nobanner"));
+    }
+  })();
 </script>
