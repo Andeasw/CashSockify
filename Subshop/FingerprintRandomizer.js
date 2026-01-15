@@ -4,7 +4,7 @@ function operator(proxies) {
 
   const NAME_PREFIX = "";        // 名称前缀，如 "A-"
   const NAME_START = "1";        // 起始序号，默认 1
-  const SKIP_VERIFY = "false";        // "true" 跳过证书验证
+  const SKIP_VERIFY = "false";   // "true" 跳过证书验证
   const FINGERPRINTS = "";       // "edge" / "firefox,ios"，留空则默认随机
 
   const start = NAME_START ? parseInt(NAME_START, 10) : 1;
